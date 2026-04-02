@@ -8,12 +8,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run dev"
+    "start": "nodemon index"
   },
   "dependencies": {
     "express": "^5.2.1",
     "mongoose": "^9.3.3",
-    "nanoid": "^3.3.11"
+    "nanoid": "^3.3.11",
+    "shortid": "^2.2.17"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
