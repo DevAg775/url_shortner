@@ -25,6 +25,8 @@ app.use("/url", urlRoute);
 app.use("/user", userRoute);  
 app.use("/", staticRoute);
 
+
+
 app.get("/test",async (req,res)=>{
   const allUrls = await URL.find({})
   return res.render('home', { urls: allUrls })
@@ -42,5 +44,9 @@ app.get('/url/:shortId', async (req, res) => {
   
   res.redirect(entry.redirectURL);
 });
+
+app.get("/logout", (req,res)=>{
+  res.send("logout Done Successfully")
+})
 
 app.listen(PORT, () => console.log(`Server Started at PORT:${PORT}`));
