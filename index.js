@@ -3,7 +3,6 @@ const path = require("path")
 const cookieParser = require("cookie-parser")
 const { connectToMongoDB } = require("./connect");
 const {restrictToLoggedinUserOnly,checkAuth} = require("./middlewares/auth")
-const { deleteUser } = require("./services/auth");
 const URL = require("./models/url");
 const shortid = require("shortid");
 
@@ -50,14 +49,8 @@ app.get('/url/:shortId', async (req, res) => {
 });
 
 app.get("/logout", (req, res) => {
-  const sessionId = req.cookies.uid;
-  
-  if (sessionId) {
-    deleteUser(sessionId); //  remove session from your store
-  }
-  
-  res.clearCookie("uid");
-  res.redirect("/");
+  res.clearCookie("uid"); 
+  res.redirect("/login");
 });
 
 app.listen(PORT, () => console.log(`Server Started at PORT:${PORT}`));
