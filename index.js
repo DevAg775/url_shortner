@@ -1,6 +1,9 @@
 const express = require("express");
 const path = require("path")
+const cookieParser = require("cookie-parser")
 const { connectToMongoDB } = require("./connect");
+const {restrictToLoggedinUserOnly,checkAuth} = require("./middlewares/auth")
+const { deleteUser } = require("./services/auth");
 const URL = require("./models/url");
 const shortid = require("shortid");
 
@@ -17,13 +20,14 @@ connectToMongoDB("mongodb://localhost:27017/short-url")
   .catch((err) => console.error("MongoDB connection error:", err));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+app.use(cookieParser())
 
 app.set("view engine","ejs")
 app.set("views",path.resolve("./views"))
 
-app.use("/url", urlRoute);
+app.use("/url",restrictToLoggedinUserOnly ,urlRoute);
 app.use("/user", userRoute);  
-app.use("/", staticRoute);
+app.use("/",checkAuth, staticRoute);
 
 
 
@@ -45,8 +49,15 @@ app.get('/url/:shortId', async (req, res) => {
   res.redirect(entry.redirectURL);
 });
 
-app.get("/logout", (req,res)=>{
-  res.send("logout Done Successfully")
-})
+app.get("/logout", (req, res) => {
+  const sessionId = req.cookies.uid;
+  
+  if (sessionId) {
+    deleteUser(sessionId); //  remove session from your store
+  }
+  
+  res.clearCookie("uid");
+  res.redirect("/");
+});
 
 app.listen(PORT, () => console.log(`Server Started at PORT:${PORT}`));
